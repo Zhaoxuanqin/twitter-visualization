@@ -1,0 +1,970 @@
+﻿<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Visualization</title>
+    <script type="text/javascript" src="../static/js/jquery.js"></script>
+    <link rel="stylesheet" href="../static/css/comon0.css">
+</head>
+<script type="text/javascript" src="../static/js/loading.js"></script>
+<script type="text/javascript" src="../static/js/echarts.min.js"></script>
+<script type="text/javascript" src="../static/js/echartst.min.js"></script>
+<script type="text/javascript" src="../static/js/echarts-gl.min.js"></script>
+<script type="text/javascript" src="../static/js/world.js"></script>
+
+
+<body>
+
+<!--这是一个动态的粒子效果图，设置了透明度为0.2-->
+<div class="canvas" style="opacity: 0.9">
+    <iframe frameborder="0" src="../static/js/index.html" style="width: 100%; height: 100%"></iframe>
+
+</div>
+
+<!--这是一个在正式页面加载进来之前显示的加载小动画，文字可以修改-->
+<div class="loading">
+    <div class="loadbox"><img src="../static/picture/loading.gif">Loading...</div>
+</div>
+
+<div class="head">
+
+    <h1>{{title}}</h1>
+
+    <div class="weather">
+        <img src="../static/picture/weather.png"><span>ADELAIDE TIME</span>
+        <span id="showTime"></span>
+    </div>
+
+<!--    尝试放到js里面-->
+    <script type="text/javascript" src="../static/js/showtime.js"></script>
+    <body>
+    <button><a href="{{ url_for('job') }}">Check out visualization of tweets</a></button>
+    </body>
+
+</div>
+
+
+
+
+<div class="mainbox">
+    <ul class="clearfix">
+
+        <!--        第1栏 -->
+        <li>
+            <div class="boxall" style="height: 3.2rem">
+                <div class="alltitle">{{form.echart1.title}}</div>
+                <div class="allnav" id="echart1"></div>
+                <div class="boxfoot"></div>
+            </div>
+            <div class="boxall" style="height: 6.4rem">
+                <div class="alltitle">{{form.echart2.title}}</div>
+                <div class="allnav" id="echart2"></div>
+                <div class="boxfoot"></div>
+            </div>
+
+{#            <div class="boxall" style="height: 3.2rem">#}
+{#                <div style="height:100%; width: 100%;">#}
+{#                    <div class="sy" id="fb1"></div>#}
+{#                    <div class="sy" id="fb2"></div>#}
+{#                    <div class="sy" id="fb3"></div>#}
+{#                </div>#}
+{#                <div class="boxfoot">#}
+{##}
+{#                </div>#}
+{#            </div>#}
+        </li>
+
+        <!--        第2栏 -->
+        <li>
+            <div class="bar">
+                <!--                放数字显示区域 -->
+                <div class="barbox">
+                    <ul class="clearfix">
+                        <li class="pulll_left counter">{{form.counter.value}}</li>
+                        <li class="pulll_left counter">{{form.counter2.value}}</li>
+                    </ul>
+                </div>
+                <!--                放文字显示区域 -->
+                <div class="barbox2">
+                    <ul class="clearfix">
+                        <li class="pulll_left">{{form.counter.name}}</li>
+                        <li class="pulll_left">{{form.counter2.name}}</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="map">
+{#                <!--                lbx 三角形组成的网 -->#}
+{#                <div class="map1"><img src="../static/picture/lbx.png"></div>#}
+{##}
+{#                <!--                jt 围绕着地球旋转的一个光环 -->#}
+{#                <div class="map2"><img src="../static/picture/jt.png"></div>#}
+                <!--                map 是一个小地球 -->
+                <div  id="map_4" style="width: 600px; height:650px;"></div>
+{#                <div class="map3"><img src="../static/picture/map.png"></div>#}
+<!--                这里估计是一个中国地图-->
+
+
+            </div>
+        </li>
+
+        <!--        第3栏-->
+        <!--        注意：这3个图表的高度不一致，但是总高度加起来和左边是一样的-->
+        <li>
+            <div class="boxall" style="height:3.4rem">
+                <div class="alltitle">{{form.echart4.title}}</div>
+                <div class="allnav" id="echart4"></div>
+                <div class="boxfoot"></div>
+            </div>
+            <div class="boxall" style="height: 3.2rem">
+                <div class="alltitle">{{form.echart5.title}}</div>
+                <div class="allnav" id="echart5"></div>
+                <div class="boxfoot"></div>
+            </div>
+            <div class="boxall" style="height: 3rem">
+                <div class="alltitle">{{form.echart6.title}}</div>
+                <div class="allnav" id="echart6"></div>
+                <div class="boxfoot"></div>
+            </div>
+
+            <div id="page1"></div>
+            <div id="page2"></div>
+    <script>
+          $("#page1").load("page/APwordcloud.html");
+
+    </script>
+
+
+
+        </li>
+
+    </ul>
+</div>
+<div class="back"></div>
+
+<!--echart1-->
+<!--<script type="text/javascript" src="../static/js/echarts_1.js"></script>-->
+<script>
+$(function echarts_1() {
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('echart1'));
+
+    option = {
+    backgroundColor: '#00265f',     // 这个背景颜色是不透明的
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'shadow'
+        }
+    },
+    grid: {
+        left: '0%',
+        top: '0%',
+		//top:'10px',
+        right: '0%',
+        bottom: '4%',
+        containLabel: true   // 表示坐标轴label标签也是grid图表的一部分
+
+    },
+    xAxis: [{
+        type: 'category',
+        data: {{form.echart1.xAxis|safe}},
+        axisLine: {
+            show: true,
+            lineStyle: {
+                color: "rgba(255,255,255,.1)",
+                width: 1,
+                type: "solid"
+            },
+        },
+        axisTick: { show: false,},
+		axisLabel:  {
+                interval: 0,
+                rotate:50,
+                show: true,
+                splitNumber: 15,
+                textStyle: {
+ 					color: "rgba(255,255,255,.6)",
+                    fontSize: '12',},
+                },}],
+
+    yAxis: [{
+        type: 'value',
+        axisLabel: {
+       //formatter: '{value} %'
+        show:true,
+         textStyle: {
+                color: "rgba(255,255,255,.6)",
+                fontSize: '12',
+                },
+        },
+        axisTick: {
+            show: false,
+        },
+        axisLine: {
+            show: true,
+            lineStyle: {
+                color: "rgba(255,255,255,.1	)",
+                width: 1,
+                type: "solid"
+            },
+        },
+        splitLine: {
+            lineStyle: {
+               color: "rgba(255,255,255,.1)",
+            }
+        }
+    }],
+    series: [
+		{
+        type: 'bar',
+        data: {{form.echart1.series|safe}},
+        barWidth:'35%', //柱子宽度
+       // barGap: 1, //柱子之间间距
+        itemStyle: {
+            normal: {
+                color:'#2f89cf',
+                opacity: 1,
+				barBorderRadius: 5,
+            }
+        }
+    }
+
+	]
+};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        window.addEventListener("resize",function(){
+            myChart.resize();
+        });
+    })
+
+</script>
+
+
+<!--echart2-->
+<script>
+  $(function echarts_2() {
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('echart2'));
+
+       option = {
+  //  backgroundColor: '#00265f',
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'shadow'}
+    },
+    grid: {
+        left: 0,
+		top:0,
+        right: 0,
+        bottom: 0,
+       containLabel: true
+    },
+    xAxis: [{
+        type: 'category',
+      		data: {{form.echart2.xAxis|safe}},
+        axisLine: {
+            show: true,
+         lineStyle: {
+                color: "rgba(255,255,255,.1)",
+                width: 1,
+                type: "solid"
+            },
+        },
+
+        axisTick: {
+            show: false,
+        },
+		axisLabel:  {
+                interval: 0,
+                rotate:30,
+                show: true,
+                splitNumber: 15,
+                textStyle: {
+ 					color: "rgba(255,255,255,.6)",
+                    fontSize: '12',
+                },
+            },
+    }],
+    yAxis: [{
+        type: 'value',
+        axisLabel: {
+           //formatter: '{value} %'
+			show:true,
+			 textStyle: {
+ 					color: "rgba(255,255,255,.6)",
+                    fontSize: '12',
+                },
+        },
+        axisTick: {
+            show: false,
+        },
+        axisLine: {
+            show: true,
+            lineStyle: {
+                color: "rgba(255,255,255,.1	)",
+                width: 1,
+                type: "solid"
+            },
+        },
+        splitLine: {
+            lineStyle: {
+               color: "rgba(255,255,255,.1)",
+            }
+        }
+    }],
+    series: [
+		{
+
+        type: 'bar',
+        data: {{form.echart2.series|safe}},
+        barWidth:'35%', //柱子宽度
+       // barGap: 1, //柱子之间间距
+        itemStyle: {
+            normal: {
+                color:'#27d08a',
+                opacity: 1,
+				barBorderRadius: 5,
+            }
+        }
+    }
+
+	]
+};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        window.addEventListener("resize",function(){
+            myChart.resize();
+        });
+    })
+
+
+
+
+
+
+
+
+{#</script>#}
+{#<!--echarts3_1-->#}
+{#<script>#}
+{#$(function echarts_31() {#}
+{#    // 基于准备好的dom，初始化echarts实例#}
+{#    var myChart = echarts.init(document.getElementById('fb1'));#}
+{#    option = {#}
+{#	    title: [{#}
+{#        text: '{{form.echarts3_1.title}}',#}
+{#        left: 'center',#}
+{#        textStyle: {#}
+{#            color: '#fff',#}
+{#			fontSize:'16'#}
+{#        }#}
+{#    }],#}
+{#    tooltip: {                                  // 鼠标放上去之后浮标的设置选项#}
+{#        trigger: 'item',#}
+{#        formatter: "{a} <br/>{b}: {c} ({d}%)",  // 标题，内容：数值%#}
+{#        position:function(p){                   //其中p为当前鼠标的位置#}
+{#        return [p[0] + 10, p[1] - 10];          // 横坐标往上，纵坐标往右，便于观看#}
+{#        }#}
+{#    },#}
+{#    legend: {#}
+{#        top:'70%',#}
+{#        itemWidth: 10,#}
+{#        itemHeight: 10,#}
+{#        data:{{form.echarts3_1.xAxis|safe}},#}
+{#        textStyle: {#}
+{#            color: 'rgba(255,255,255,.5)',#}
+{#            fontSize:'12',#}
+{#        }#}
+{#    },#}
+{#    series: [#}
+{#        {#}
+{#        	name:'{{form.echarts3_1.title}}',#}
+{#            type:'pie',#}
+{#			center: ['50%', '42%'],#}
+{#            radius: ['40%', '60%'],#}
+{#                  color: ['#065aab', '#066eab', '#0682ab', '#0696ab', '#06a0ab','#06b4ab','#06c8ab','#06dcab','#06f0ab'],#}
+{#            label: {show:false},#}
+{#			labelLine: {show:false},#}
+{#            data:{{form.echarts3_1.data|safe}}#}
+{#        }#}
+{#    ]#}
+{#};#}
+{#    // 使用刚指定的配置项和数据显示图表。#}
+{#    myChart.setOption(option);#}
+{#    window.addEventListener("resize",function(){#}
+{#        myChart.resize();#}
+{#    });#}
+{#})#}
+{##}
+{##}
+{##}
+{#</script>#}
+{#<!--echarts3_2-->#}
+{#<script>#}
+{#$(function echarts_32() {#}
+{#    // 基于准备好的dom，初始化echarts实例#}
+{#    var myChart = echarts.init(document.getElementById('fb2'));#}
+{#    option = {#}
+{#	    title: [{#}
+{#        text: '{{form.echarts3_2.title}}',#}
+{#        left: 'center',#}
+{#        textStyle: {#}
+{#            color: '#fff',#}
+{#			fontSize:'16'#}
+{#        }#}
+{##}
+{#    }],#}
+{#    tooltip: {#}
+{#        trigger: 'item',#}
+{#        formatter: "{a} <br/>{b}: {c} ({d}%)",#}
+{#        position:function(p){   //其中p为当前鼠标的位置#}
+{#            return [p[0] + 10, p[1] - 10];#}
+{#        }#}
+{#    },#}
+{#    legend: {#}
+{#        top:'70%',#}
+{#        itemWidth: 10,#}
+{#        itemHeight: 10,#}
+{#        data:{{form.echarts3_2.xAxis|safe}},#}
+{#        textStyle: {#}
+{#        color: 'rgba(255,255,255,.5)',#}
+{#		fontSize:'12',#}
+{#        }#}
+{#    },#}
+{#    series: [#}
+{#        {#}
+{#        	name:'{{form.echarts3_2.title}}',   // 这个标题是tooltip上显示的标题#}
+{#            type:'pie',#}
+{#			center: ['50%', '42%'],#}
+{#            radius: ['40%', '60%'],#}
+{#            color: ['#065aab', '#066eab', '#0682ab', '#0696ab', '#06a0ab','#06b4ab','#06c8ab','#06dcab','#06f0ab'],#}
+{#            label: {show:false},#}
+{#			labelLine: {show:false},#}
+{#            data:{{form.echarts3_2.data|safe}}#}
+{#        }#}
+{#    ]#}
+{#};#}
+{##}
+{#// 使用刚指定的配置项和数据显示图表。#}
+{#myChart.setOption(option);#}
+{#window.addEventListener("resize",function(){#}
+{#    myChart.resize();#}
+{#});#}
+{#})#}
+{##}
+{##}
+{##}
+{#</script>#}
+{#<!--echarts3_3-->#}
+{#<script>#}
+{#$(function echarts_33() {#}
+{#    // 基于准备好的dom，初始化echarts实例#}
+{#    var myChart = echarts.init(document.getElementById('fb3'));#}
+{#    option = {#}
+{#        title: [{#}
+{#        text: '{{form.echarts3_3.title}}',#}
+{#        left: 'center',#}
+{#        textStyle: {#}
+{#            color: '#fff',#}
+{#            fontSize:'16'#}
+{#        }#}
+{#    }],#}
+{#    tooltip: {#}
+{#        trigger: 'item',#}
+{#        formatter: "{a} <br/>{b}: {c} ({d}%)",#}
+{#        position:function(p){   //其中p为当前鼠标的位置#}
+{#            return [p[0] + 10, p[1] - 10];#}
+{#        }#}
+{#    },#}
+{#    legend: {#}
+{#    top:'70%',#}
+{#        itemWidth: 10,#}
+{#        itemHeight: 10,#}
+{#        data:{{form.echarts3_3.xAxis|safe}},#}
+{#        textStyle: {#}
+{#            color: 'rgba(255,255,255,.5)',#}
+{#			fontSize:'12',#}
+{#        }#}
+{#    },#}
+{#    series: [#}
+{#        {#}
+{#        	name:'{{form.echarts3_3.title}}',#}
+{#            type:'pie',#}
+{#			center: ['50%', '42%'],#}
+{#            radius: ['40%', '60%'],#}
+{#            color: ['#065aab', '#066eab', '#0682ab', '#0696ab', '#06a0ab','#06b4ab','#06c8ab','#06dcab','#06f0ab'],#}
+{#            label: {show:false},#}
+{#			labelLine: {show:false},#}
+{#            data:{{form.echarts3_3.data|safe}}#}
+{#        }#}
+{#    ]#}
+{#};#}
+{##}
+{#        // 使用刚指定的配置项和数据显示图表。#}
+{#        myChart.setOption(option);#}
+{#        window.addEventListener("resize",function(){#}
+{#            myChart.resize();#}
+{#        });#}
+{#    })#}
+{##}
+{##}
+{##}
+{##}
+
+
+</script>
+<!--echarts4-->
+<script>
+$(function echarts_4() {
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('echart4'));
+    option = {
+	    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            lineStyle: {
+                color: '#dddc6b'
+            }
+        }
+    },
+	legend: {
+        top:'0%',
+        data:{{form.echart4.names|safe}},
+        textStyle: {
+            color: 'rgba(255,255,255,.5)',
+            fontSize:'15',
+        }
+    },
+    grid: {
+        left: '10',
+		top: '30',
+        right: '10',
+        bottom: '10',
+        containLabel: true  // 包含坐标轴的图例
+    },
+    xAxis: [{
+        type: 'category',
+        boundaryGap: false,
+        axisLabel:  {
+            textStyle: {
+                color: "rgba(255,255,255,.6)",
+                fontSize:12,
+                },
+            },
+        axisLine: {
+			lineStyle: {
+				color: 'rgba(255,255,255,.2)'
+			    }
+            },
+        data: {{form.echart4.xAxis|safe}}
+        },
+        {
+        axisPointer: {show: false},
+        axisLine: {show: false},
+        position: 'bottom',
+        offset: 20,
+    }],
+    yAxis: [{
+        type: 'value',
+        axisTick: {show: false},
+        axisLine: {
+            lineStyle: {
+                color: 'rgba(255,255,255,.1)'
+            }
+        },
+        axisLabel:  {
+            textStyle: {
+                color: "rgba(255,255,255,.6)",
+                fontSize:12,
+            },
+        },
+        splitLine: {
+            lineStyle: {
+                 color: 'rgba(255,255,255,.1)'
+            }
+        }
+    }],
+    series: [
+	{
+        name: '{{form.echart4.data[0].name}}',
+        data: {{form.echart4.data[0].value|safe}},
+        type: 'line',
+        smooth: true,
+        symbol: 'circle',
+        symbolSize: 5,
+        showSymbol: false,
+        lineStyle: {
+            normal: {
+				color: '#0184d5',
+                width: 2
+            }
+        },
+        areaStyle: {
+            normal: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                    offset: 0,
+                    color: 'rgba(1, 132, 213, 0.4)'
+                }, {
+                    offset: 0.8,
+                    color: 'rgba(1, 132, 213, 0.1)'
+                }], false),
+                shadowColor: 'rgba(0, 0, 0, 0.1)',
+            }
+        },
+			itemStyle: {
+			normal: {
+				color: '#0184d5',
+				borderColor: 'rgba(221, 220, 107, .1)',
+				borderWidth: 12
+			}
+		},
+    },
+    {
+        name: '{{form.echart4.data[1].name}}',
+        data: {{form.echart4.data[1].value|safe}},
+        type: 'line',
+        smooth: true,
+        symbol: 'circle',
+        symbolSize: 5,
+        showSymbol: false,
+        lineStyle: {
+            normal: {
+				color: '#00d887',
+                width: 2
+            }
+        },
+        areaStyle: {
+            normal: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                    offset: 0,
+                    color: 'rgba(0, 216, 135, 0.4)'
+                }, {
+                    offset: 0.8,
+                    color: 'rgba(0, 216, 135, 0.1)'
+                }], false),
+                shadowColor: 'rgba(0, 0, 0, 0.1)',
+            }
+        },
+			itemStyle: {
+			normal: {
+				color: '#00d887',
+				borderColor: 'rgba(128,221,107,0.1)',
+				borderWidth: 12
+			}
+		},
+    },
+        {
+        name: '{{form.echart4.data[2].name}}',
+        data: {{form.echart4.data[2].value|safe}},
+        type: 'line',
+        smooth: true,
+        symbol: 'circle',
+        symbolSize: 5,
+        showSymbol: false,
+        lineStyle: {
+            normal: {
+				color: '#ffb71d',
+                width: 2
+            }
+        },
+        areaStyle: {
+            normal: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                    offset: 0,
+                    color: 'rgba(213,146,1,0.4)'
+                }, {
+                    offset: 0.8,
+                    color: 'rgba(1, 132, 213, 0.1)'
+                }], false),
+                shadowColor: 'rgba(0, 0, 0, 0.1)',
+            }
+        },
+			itemStyle: {
+			normal: {
+				color: '#ff9d1d',
+				borderColor: 'rgba(221, 220, 107, .1)',
+				borderWidth: 12
+			}
+		},
+    },
+]
+};
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+    window.addEventListener("resize",function(){
+        myChart.resize();
+    });
+})
+
+
+</script>
+<!--echarts5-->
+<script>
+$(function echarts_5() {
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('echart5'));
+
+
+option = {color: ['#006cff', '#60cda0', '#ed8884', '#ff9f7f', '#0096ff', '#9fe6b8', '#32c5e9', '#1d9dff'],
+
+  series: [
+    {
+      name: 'Nightingale Chart',
+      type: 'pie',
+      radius: [35, 100],
+      center: ['50%', '50%'],
+      roseType: 'area',
+        label:{
+        fontSize:'22'
+      },
+
+
+      itemStyle: {
+        borderRadius: 8
+      },
+      data: [
+        { value: 170, name: 'positive' },
+        { value: 99, name: 'negative' },
+        { value: 45, name: 'natrual' },
+
+      ]
+    }
+  ]
+};
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+    window.addEventListener("resize",function(){
+        myChart.resize();
+    });
+})
+
+
+
+</script>
+<!--echarts6-->
+<script>
+$(function echarts_6() {
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('echart6'));
+    var dataStyle = {
+	normal: {
+		label: {
+			show: false
+		},
+		labelLine: {
+			show: false
+		},
+		//shadowBlur: 40,
+		//shadowColor: 'rgba(40, 40, 40, 1)',
+	}
+};
+var placeHolderStyle = {
+	normal: {
+		color: 'rgba(255,255,255,.05)',
+		label: {show: false,},
+		labelLine: {show: false}
+	},
+	emphasis: {
+		color: 'rgba(0,0,0,0)'
+	}
+};
+option = {
+	color: ['#0f63d6', '#0f78d6', '#0f8cd6', '#0fa0d6', '#0fb4d6'],
+	tooltip: {
+		show: true,
+		formatter: "{a} : {c} "
+	},
+	legend: {
+		itemWidth: 10,
+        itemHeight: 10,
+
+		itemGap: 12,
+		bottom: '3%',
+		data: {{form.echart6.xAxis|safe}},
+		textStyle: {
+            color: 'rgba(255,255,255,.6)',
+            fontSize:15
+        }
+	},
+	series: [
+{% for item in form.echart6.data %}
+		{
+		name: '{{item.name|safe}}',
+		type: 'pie',
+		clockWise: false,
+		center: ['50%', '42%'],
+		radius: {{item.radius|safe}},
+		itemStyle: dataStyle,
+		hoverAnimation: false,
+		data: [{
+			value: {{item.value}},
+			name: '{{item.color}}'
+		}, {
+			value: {{item.value2}},
+			name: 'invisible',
+			tooltip: {show: false},
+			itemStyle: placeHolderStyle
+		}]
+	    },
+{% endfor %}
+	]
+};
+
+// 使用刚指定的配置项和数据显示图表。
+myChart.setOption(option);
+window.addEventListener("resize",function(){
+    myChart.resize();
+});
+})
+
+
+
+
+
+</script>
+
+<!--map_1-->
+<script>
+    $(function map() {
+
+		var dom = document.getElementById("map_4")
+		var myChart = echarts.init(dom)
+
+
+
+		option = {
+
+			  globe:{
+			    baseTexture: "../static/images/world.jpg",
+			    heightTexture: "../static/images/world.jpg",
+			     displacementScale: 0.04,
+                  viewControl: {
+                autoRotate: true, // 是否开启视角绕物体的自动旋转查看
+                autoRotateSpeed: 3, //物体自转的速度,单位为角度 / 秒，默认为10 ，也就是36秒转一圈。
+                autoRotateAfterStill: 2, // 在鼠标静止操作后恢复自动旋转的时间间隔,默认 3s
+                rotateSensitivity: 2, // 旋转操作的灵敏度，值越大越灵敏.设置为0后无法旋转。[1, 0]只能横向旋转.[0, 1]只能纵向旋转
+                targetCoord: [116.46, 39.92], // 定位到北京
+                {#maxDistance: 160,#}
+                {#minDistance: 160#}
+            },
+			    {#environment: "../static/images/starfield.jpg",#}
+			    shading:"realistic",
+			    realisticMaterial: {
+		            roughness: 0.9
+		        },
+			    postEffect: {
+		            enable: true
+		        },
+		        light: {
+		            main: {
+		                intensity: 5,
+
+		            },
+		            ambientCubemap: {
+
+		            }
+		        },
+
+
+
+
+
+			  },
+			   series: [
+      {
+        type: 'scatter3D',
+      coordinateSystem: 'globe',
+          label: {
+        fontSize: 24,
+        show: true,
+        position: 'right',
+        formatter: '{b}'
+      },
+
+        data: [
+        {
+          name: 'SAHNGHAI',
+          value: [121.47,31.23,"SHANGHAI"]
+        },
+        {
+          name: 'BEIJING',
+          value: [116.40,39.90,"BEIJING"]
+        },
+        {
+          name: 'ADELAIDE',
+          value: [138.3521,-34.5534]    // value的前两项是经纬度坐标，第三项为污染度数据
+        },
+
+        {
+          name: 'Melbourne',
+          value: [144.963,-37.813]    // value的前两项是经纬度坐标，第三项为污染度数据
+        },
+        {
+          name: 'SYDNEY',
+          value: [151.209,-33.868]
+        },
+        {
+          name: 'Hobart',
+          value: [147.325,-42.882]
+        },
+        {
+          name: 'Perth',
+          value: [115.8613,-31.9523]
+        },
+        {
+          name: 'Darwin',
+          value: [130.8444,-12.4637]
+        },
+        {
+          name: 'Alice Springs',
+          value: [133.88,-23.698]
+        },
+        {
+          name: 'Townsville',
+          value: [146.8169,-19.2589]
+        },
+        {
+          name: 'Cairns',
+          value: [145.7709,-16.9203]
+        },
+        {
+          name: 'Canberra',
+          value: [149.1244,-35.3075]
+        },
+        {
+          name: 'Brisbane',
+          value: [153.026,-27.4704]
+        },
+
+      ],
+
+         symbolSize: 30,
+
+
+        itemStyle: {
+          color: 'rgba(213,1,65,0.4)',
+
+
+        }
+      }
+    ]
+
+		};
+		if (option && typeof option === "object") {
+		  myChart.setOption(option, true);
+		}
+    }
+)
+
+
+
+
+
+</script>
+</body>
+</html>

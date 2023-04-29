@@ -1,0 +1,882 @@
+﻿<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>twitter user visualization</title>
+    <script type="text/javascript" src="../static/js/jquery.js"></script>
+    <link rel="stylesheet" href="../static/css/comon0.css">
+</head>
+<script type="text/javascript" src="../static/js/loading.js"></script>
+<script type="text/javascript" src="../static/js/echartst.min.js"></script>
+<script type="text/javascript" src="../static/js/china.js"></script>
+<script type="text/javascript" src="../static/js/wordcloud2.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+
+
+<body>
+
+<!--这是一个动态的粒子效果图，设置了透明度为0.2-->
+<div class="canvas" style="opacity: 0.9">
+    <iframe frameborder="0" src="../static/js/index.html" style="width: 100%; height: 100%"></iframe>
+</div>
+
+<!--这是一个在正式页面加载进来之前显示的加载小动画，文字可以修改-->
+<div class="loading">
+    <div class="loadbox"><img src="../static/picture/loading.gif"> Loading...</div>
+</div>
+
+<div class="head">
+
+    <h1>{{title}}</h1>
+
+    <div class="weather">
+        <img src="../static/picture/weather.png"><span>Adelaide time</span>
+        <span id="showTime"></span>
+    </div>
+
+<!--    尝试放到js里面-->
+    <script type="text/javascript" src="../static/js/showtime.js"></script>
+     <body>
+    <button><a href="{{ url_for('index') }}">Going back,please click here</a></button>
+    </body>
+
+</div>
+
+<div class="mainbox">
+    <ul class="clearfix">
+
+        <!--        第1栏 -->
+        <li>
+            <div class="boxall" style="height: 3.2rem">
+                <div class="alltitle">{{form.echart1.title}}</div>
+                <div class="allnav" id="echart1"></div>
+                <div class="boxfoot"></div>
+            </div>
+{#            <div class="boxall" style="height: 3.2rem">#}
+{#                <div class="alltitle">{{form.echart2.title}}</div>#}
+{#                <div class="allnav" id="echart2"></div>#}
+{#                <div class="boxfoot"></div>#}
+{#            </div>#}
+            <div class="boxall" style="height: 6.4rem">
+                <div class="alltitle">{{form.echarts3_1.title}}</div>
+                <div class="allnav" id="echart3"></div>
+                <div class="boxfoot"></div>
+            </div>
+        </li>
+
+        <!--        第2栏 -->
+        <li>
+            <div class="bar">
+                <!--                放数字显示区域 -->
+                <div class="barbox">
+                    <ul class="clearfix">
+                        <li class="pulll_left counter">{{form.counter.value}}</li>
+                        <li class="pulll_left counter">{{form.counter2.value}}</li>
+                    </ul>
+                </div>
+                <!--                放文字显示区域 -->
+                <div class="barbox2">
+                    <ul class="clearfix">
+                        <li class="pulll_left">{{form.counter.name}}</li>
+                        <li class="pulll_left">{{form.counter2.name}}</li>
+                    </ul>
+                </div>
+            </div>
+             <div class="boxall" style="height: 6.4rem">
+                <div class="alltitle">{{form.echart5.title}}</div>
+                <div class="allnav" id="echart6"></div>
+                <div class="boxfoot"></div>
+            </div>
+
+
+        </li>
+
+        <!--        第3栏-->
+        <!--        注意：这3个图表的高度不一致，但是总高度加起来和左边是一样的-->
+        <li>
+            <div class="boxall" style="height:3.4rem">
+                <div class="alltitle">{{form.echart4.title}}</div>
+                <div class="allnav" id="echart4"></div>
+                <div class="boxfoot"></div>
+            </div>
+            <div class="boxall" style="height: 6.4rem">
+                <img src="../static/images/wordcloud.png" width="630" height="600" />
+            </div>
+
+        </li>
+
+    </ul>
+</div>
+<div class="back"></div>
+
+<!--echart1-->
+<!--<script type="text/javascript" src="../static/js/echarts_1.js"></script>-->
+<script>
+$(function echarts_1() {
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('echart1'));
+
+    option = {
+    backgroundColor: '#00265f',     // 这个背景颜色是不透明的
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'shadow'
+        }
+    },
+    grid: {         
+        left: '0%',
+        top: '0%',
+		//top:'10px',
+        right: '0%',
+        bottom: '4%',
+        containLabel: true   // 表示坐标轴label标签也是grid图表的一部分
+    },
+    xAxis: [{
+        type: 'category',
+        data: {{form.echart1.xAxis|safe}},
+        axisLine: {
+            show: true,
+            lineStyle: {
+                color: "rgba(255,255,255,.1)",
+                width: 1,
+                type: "solid"
+            },
+        },
+        axisTick: { show: false,},
+		axisLabel:  {
+                interval: 0,
+                rotate:50,
+                show: true,
+                splitNumber: 15,
+                textStyle: {
+ 					color: "rgba(255,255,255,.6)",
+                    fontSize: '12',},
+                },}],
+
+    yAxis: [{
+        type: 'value',
+        axisLabel: {
+       //formatter: '{value} %'
+        show:true,
+         textStyle: {
+                color: "rgba(255,255,255,.6)",
+                fontSize: '12',
+                },
+        },
+        axisTick: {
+            show: false,
+        },
+        axisLine: {
+            show: true,
+            lineStyle: {
+                color: "rgba(255,255,255,.1	)",
+                width: 1,
+                type: "solid"
+            },
+        },
+        splitLine: {
+            lineStyle: {
+               color: "rgba(255,255,255,.1)",
+            }
+        }
+    }],
+    series: [
+		{
+        type: 'bar',
+        data: {{form.echart1.series|safe}},
+        barWidth:'35%', //柱子宽度
+       // barGap: 1, //柱子之间间距
+        itemStyle: {
+            normal: {
+                color:'#2f89cf',
+                opacity: 1,
+				barBorderRadius: 5,
+            }
+        }
+    }
+
+	]
+};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        window.addEventListener("resize",function(){
+            myChart.resize();
+        });
+    })
+
+</script>
+
+
+</script>
+<!--echarts3_1-->
+<script>
+    $(function echarts_3() {
+        var app = {};
+
+var chartDom = document.getElementById('echart3');
+var myChart = echarts.init(chartDom);
+var option;
+
+const categories = (function () {
+  let now = new Date();
+  let res = [];
+  let len = 10;
+  while (len--) {
+    res.unshift(now.toLocaleTimeString().replace(/^\D*/, ''));
+    now = new Date(+now - 2000);
+  }
+  return res;
+})();
+const categories2 = (function () {
+  let res = [];
+  let len = 10;
+  while (len--) {
+    res.push(10 - len - 1);
+  }
+  return res;
+})();
+const data = (function () {
+  let res = [];
+  let len = 10;
+  while (len--) {
+    res.push(Math.round(Math.random() * 1000));
+  }
+  return res;
+})();
+const data2 = (function () {
+  let res = [];
+  let len = 0;
+  while (len < 10) {
+    res.push(+(Math.random() * 10 + 5).toFixed(1));
+    len++;
+  }
+  return res;
+})();
+option = {
+
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'cross',
+      label: {
+        backgroundColor: '#562836'
+      }
+    }
+  },
+  legend: {},
+    font:{
+      color:'#ffffff'
+    },
+
+  dataZoom: {
+    show: false,
+    start: 0,
+    end: 100
+  },
+  xAxis: [
+    {
+      type: 'category',
+      boundaryGap: true,
+      data: categories
+    },
+    {
+      type: 'category',
+      boundaryGap: true,
+      data: categories2
+    }
+  ],
+  yAxis: [
+    {
+      type: 'value',
+      scale: true,
+      name: 'Price',
+      max: 30,
+      min: 0,
+
+    },
+    {
+      type: 'value',
+      scale: true,
+      name: 'Order',
+      max: 1200,
+      min: 0,
+
+    }
+  ],
+  series: [
+    {
+      name: 'Dynamic Bar',
+      type: 'bar',
+      xAxisIndex: 1,
+      yAxisIndex: 1,
+      data: data
+    },
+    {
+      name: 'Dynamic Line',
+      type: 'line',
+      data: data2
+    }
+  ]
+};
+app.count = 11;
+setInterval(function () {
+  let axisData = new Date().toLocaleTimeString().replace(/^\D*/, '');
+  data.shift();
+  data.push(Math.round(Math.random() * 1000));
+  data2.shift();
+  data2.push(+(Math.random() * 10 + 5).toFixed(1));
+  categories.shift();
+  categories.push(axisData);
+  categories2.shift();
+  categories2.push(app.count++);
+  myChart.setOption({
+    xAxis: [
+      {
+        data: categories
+      },
+      {
+        data: categories2
+      }
+    ],
+    series: [
+      {
+        data: data
+      },
+      {
+        data: data2
+      }
+    ]
+  });
+}, 2100);
+
+option && myChart.setOption(option);
+
+    })
+
+
+
+</script>
+<!--echarts4-->
+<script>
+$(function echarts_4() {
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('echart4'));
+
+       option = {
+  //  backgroundColor: '#00265f',
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'shadow'}
+    },
+    grid: {
+        left: '0%',
+		top:'10px',
+        right: '0%',
+        bottom: '4%',
+       containLabel: true
+    },
+    xAxis: [{
+        type: 'category',
+      		data: {{form.echart2.xAxis|safe}},
+        axisLine: {
+            show: true,
+         lineStyle: {
+                color: "rgba(255,255,255,.1)",
+                width: 1,
+                type: "solid"
+            },
+        },
+
+        axisTick: {
+            show: false,
+        },
+		axisLabel:  {
+                interval: 0,
+               // rotate:50,
+                show: true,
+                splitNumber: 15,
+                textStyle: {
+ 					color: "rgba(255,255,255,.6)",
+                    fontSize: '12',
+                },
+            },
+    }],
+    yAxis: [{
+        type: 'value',
+        axisLabel: {
+           //formatter: '{value} %'
+			show:true,
+			 textStyle: {
+ 					color: "rgba(255,255,255,.6)",
+                    fontSize: '12',
+                },
+        },
+        axisTick: {
+            show: false,
+        },
+        axisLine: {
+            show: true,
+            lineStyle: {
+                color: "rgba(255,255,255,.1	)",
+                width: 1,
+                type: "solid"
+            },
+        },
+        splitLine: {
+            lineStyle: {
+               color: "rgba(255,255,255,.1)",
+            }
+        }
+    }],
+    series: [
+		{
+
+        type: 'bar',
+        data: {{form.echart2.series|safe}},
+        barWidth:'35%', //柱子宽度
+       // barGap: 1, //柱子之间间距
+        itemStyle: {
+            normal: {
+                color:'#27d08a',
+                opacity: 1,
+				barBorderRadius: 5,
+            }
+        }
+    }
+
+	]
+};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        window.addEventListener("resize",function(){
+            myChart.resize();
+        });
+    })
+
+
+
+</script>
+<!--echarts5-->
+<script>
+$(function echarts_5() {
+    // 基于准备好的dom，初始化echarts实例
+
+var app = {};
+var chartDom = document.getElementById('echart5');
+var myChart = echarts.init(chartDom);
+var option;
+
+var data = [
+  {
+    name: 'Cancer',
+    itemStyle: {
+      color: '#da0d68'
+    },
+    children: [
+      {
+        name: 'cancer awareness',
+        value: 1,
+        itemStyle: {
+          color: '#975e6d'
+        }
+      },
+      {
+        name: 'CancerPrevention',
+          value: 1,
+        itemStyle: {
+          color: '#e0719c'
+        },
+
+
+      },
+      {
+            name: 'VaccinesWork',
+            value: 1,
+            itemStyle: {
+              color: '#f99e1c'
+            }
+          },
+    ]
+  },
+  {
+    name: 'Health condition',
+    itemStyle: {
+      color: '#4cda1d'
+    },
+          children: [
+      {
+        name: 'FluShot',
+        value: 2,
+        itemStyle: {
+          color: '#975e6d'
+        }
+      },
+      {
+        name: 'Diabetes',
+          value: 4,
+        itemStyle: {
+          color: 'rgba(1,36,213,0.4)'
+        },
+
+
+      },
+      {
+            name: 'Nutritionist',
+            value: 4,
+            itemStyle: {
+              color: '#f99e1c'
+            }
+          },
+              {
+            name: 'WomensHealth',
+            value: 4,
+            itemStyle: {
+              color: '#e62969'
+            }
+          },
+    ]
+
+  },
+  {
+    name: 'Healthcare marketing',
+    itemStyle: {
+      color: 'rgba(213,1,26,0.4)'
+    },
+       children: [
+      {
+        name: 'social media',
+        value: 1,
+        itemStyle: {
+          color: 'rgba(128,221,107,0.1)'
+        }
+      },
+      {
+        name: 'marketing',
+          value: 4,
+        itemStyle: {
+          color: 'rgb(255,29,29)'
+        },
+
+
+      },
+      {
+            name: 'medical education',
+            value: 3,
+            itemStyle: {
+              color: '#c9f91c'
+            }
+          },
+              {
+            name: 'Patient',
+            value: 2,
+            itemStyle: {
+              color: '#32963f'
+            }
+          },
+              {
+            name: 'Physicians',
+            value: 1,
+            itemStyle: {
+              color: 'rgba(213,146,1,0.4)'
+            }
+          },
+           {
+            name: 'Telemedicine',
+            value: 2,
+            itemStyle: {
+              color: '#1d86ff'
+            }
+          },
+           {
+            name: 'Telehealth',
+            value: 1,
+            itemStyle: {
+              color: '#29e675'
+            }
+          },
+
+    ]
+
+
+  },
+
+
+
+
+];
+option = {
+     textStyle: {
+      fontSize: 10,
+      align: 'center'
+    },
+
+  series: {
+    type: 'sunburst',
+    data: data,
+    radius: [0, '95%'],
+    sort: undefined,
+
+    emphasis: {
+      focus: 'ancestor'
+    },
+    levels: [
+      {},
+      {
+        r0: '15%',
+        r: '35%',
+        itemStyle: {
+          borderWidth: 2
+        },
+        label: {
+          rotate: 'tangential'
+        }
+      },
+      {
+        r0: '35%',
+        r: '70%',
+        label: {
+          align: 'right'
+        }
+      },
+      {
+        r0: '70%',
+        r: '72%',
+        label: {
+          position: 'outside',
+          padding: 3,
+          silent: false
+        },
+        itemStyle: {
+          borderWidth: 3
+        }
+      }
+    ]
+  }
+};
+
+option && myChart.setOption(option);
+
+})
+
+
+$(function echarts_6() {
+    // 基于准备好的dom，初始化echarts实例
+
+var app = {};
+var chartDom = document.getElementById('echart6');
+var myChart = echarts.init(chartDom);
+var option;
+
+var data = [
+  {
+    name: 'Cancer',
+    itemStyle: {
+      color: '#da0d68'
+    },
+    children: [
+      {
+        name: 'cancer awareness',
+        value: 1,
+        itemStyle: {
+          color: '#975e6d'
+        }
+      },
+      {
+        name: 'CancerPrevention',
+          value: 1,
+        itemStyle: {
+          color: '#e0719c'
+        },
+
+
+      },
+      {
+            name: 'VaccinesWork',
+            value: 1,
+            itemStyle: {
+              color: '#f99e1c'
+            }
+          },
+    ]
+  },
+  {
+    name: 'Health condition',
+    itemStyle: {
+      color: '#4cda1d'
+    },
+          children: [
+      {
+        name: 'FluShot',
+        value: 2,
+        itemStyle: {
+          color: '#975e6d'
+        }
+      },
+      {
+        name: 'Diabetes',
+          value: 4,
+        itemStyle: {
+          color: 'rgba(1,36,213,0.4)'
+        },
+
+
+      },
+      {
+            name: 'Nutritionist',
+            value: 4,
+            itemStyle: {
+              color: '#f99e1c'
+            }
+          },
+              {
+            name: 'WomensHealth',
+            value: 4,
+            itemStyle: {
+              color: '#e62969'
+            }
+          },
+    ]
+
+  },
+  {
+    name: 'Healthcare marketing',
+    itemStyle: {
+      color: 'rgba(213,1,26,0.4)'
+    },
+       children: [
+      {
+        name: 'social media',
+        value: 1,
+        itemStyle: {
+          color: 'rgba(128,221,107,0.1)'
+        }
+      },
+      {
+        name: 'marketing',
+          value: 4,
+        itemStyle: {
+          color: 'rgb(255,29,29)'
+        },
+
+
+      },
+      {
+            name: 'medical education',
+            value: 3,
+            itemStyle: {
+              color: '#c9f91c'
+            }
+          },
+              {
+            name: 'Patient',
+            value: 2,
+            itemStyle: {
+              color: '#32963f'
+            }
+          },
+              {
+            name: 'Physicians',
+            value: 1,
+            itemStyle: {
+              color: 'rgba(213,146,1,0.4)'
+            }
+          },
+           {
+            name: 'Telemedicine',
+            value: 2,
+            itemStyle: {
+              color: '#1d86ff'
+            }
+          },
+           {
+            name: 'Telehealth',
+            value: 1,
+            itemStyle: {
+              color: '#29e675'
+            }
+          },
+
+    ]
+
+
+  },
+
+
+
+
+];
+option = {
+     textStyle: {
+      fontSize: 10,
+      align: 'center'
+    },
+
+  series: {
+    type: 'sunburst',
+    data: data,
+    radius: [0, '95%'],
+    sort: undefined,
+
+    emphasis: {
+      focus: 'ancestor'
+    },
+    levels: [
+      {},
+      {
+        r0: '15%',
+        r: '35%',
+        itemStyle: {
+          borderWidth: 2
+        },
+        label: {
+          rotate: 'tangential'
+        }
+      },
+      {
+        r0: '35%',
+        r: '70%',
+        label: {
+          align: 'right'
+        }
+      },
+      {
+        r0: '30%',
+        r: '72%',
+        label: {
+          position: 'outside',
+          padding: 3,
+          silent: false
+        },
+        itemStyle: {
+          borderWidth: 3
+        }
+      }
+    ]
+  }
+};
+
+option && myChart.setOption(option);
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>
